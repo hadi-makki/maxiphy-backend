@@ -7,7 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { QueryTodoDto } from './dto/query-todo.dto';
-import { Priority } from '@prisma/client';
+import { Priority, Prisma } from '@prisma/client';
 
 @Injectable()
 export class TodosService {
@@ -41,7 +41,7 @@ export class TodosService {
     const skip = (pageNum - 1) * limitNum;
 
     // Build where clause
-    const where: any = {
+    const where: Prisma.TodoWhereInput = {
       userId,
     };
 
@@ -61,7 +61,7 @@ export class TodosService {
     }
 
     // Build orderBy clause
-    const orderBy: any = {};
+    const orderBy: Prisma.TodoOrderByWithRelationInput = {};
 
     if (sortBy === 'priority') {
       // Custom priority ordering: HIGH, MEDIUM, LOW
@@ -114,7 +114,7 @@ export class TodosService {
     // First check if todo exists and belongs to user
     await this.findOne(id, userId);
 
-    const updateData: any = { ...updateTodoDto };
+    const updateData: Prisma.TodoUpdateInput = { ...updateTodoDto };
 
     if (updateTodoDto.date) {
       updateData.date = new Date(updateTodoDto.date);
