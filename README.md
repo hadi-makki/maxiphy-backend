@@ -34,9 +34,9 @@ maxiphy-backend/
 │   ├── app.module.ts       # Main application module
 │   └── main.ts            # Application entry point
 ├── prisma/                 # Database schema and migrations
-│   ├── schema.prisma      # Database schema
-│   └── migrations/        # Database migrations
-└── test/                  # E2E tests
+    ├── schema.prisma      # Database schema
+    └── migrations/        # Database migrations
+
 ```
 
 ## 🚀 Getting Started
