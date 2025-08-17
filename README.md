@@ -167,12 +167,6 @@ interface Todo {
 ```bash
 # Unit tests
 yarn test
-
-# E2E tests
-yarn test:e2e
-
-# Test coverage
-yarn test:cov
 ```
 
 ### Test Files
