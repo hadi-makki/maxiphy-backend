@@ -1,99 +1,362 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Maxiphy Backend - NestJS Todo API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A robust REST API backend for the todo application built with NestJS, featuring authentication, database management, and comprehensive todo operations.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🛠 Tech Stack
 
-## Description
+- **NestJS** - Node.js framework with TypeScript
+- **Prisma** - Database ORM with type safety
+- **PostgreSQL** - Relational database
+- **JWT** - JSON Web Tokens for authentication
+- **bcryptjs** - Password hashing
+- **Class Validator** - Input validation and transformation
+- **Passport** - Authentication middleware
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 📁 Project Structure
 
-## Project setup
-
-```bash
-$ yarn install
+```
+maxiphy-backend/
+├── src/
+│   ├── auth/                 # Authentication module
+│   │   ├── auth.controller.ts
+│   │   ├── auth.service.ts
+│   │   ├── dto/             # Data Transfer Objects
+│   │   ├── guards/          # JWT guards
+│   │   ├── strategies/      # Passport strategies
+│   │   └── decorators/      # Custom decorators
+│   ├── todos/               # Todos module
+│   │   ├── todos.controller.ts
+│   │   ├── todos.service.ts
+│   │   └── dto/            # Todo DTOs
+│   ├── prisma/             # Database service
+│   │   ├── prisma.module.ts
+│   │   └── prisma.service.ts
+│   ├── app.module.ts       # Main application module
+│   └── main.ts            # Application entry point
+├── prisma/                 # Database schema and migrations
+│   ├── schema.prisma      # Database schema
+│   └── migrations/        # Database migrations
+└── test/                  # E2E tests
 ```
 
-## Compile and run the project
+## 🚀 Getting Started
 
-```bash
-# development
-$ yarn run start
+### Prerequisites
 
-# watch mode
-$ yarn run start:dev
+- Node.js 18+
+- PostgreSQL 14+
+- npm or yarn
 
-# production mode
-$ yarn run start:prod
+### Installation & Setup
+
+1. **Install dependencies**
+
+   ```bash
+   yarn install
+   ```
+
+2. **Setup PostgreSQL database**
+
+   ```bash
+   # Create database
+   sudo -u postgres psql -c "CREATE DATABASE todoapp;"
+
+   # Create user (optional - you can use postgres user)
+   sudo -u postgres psql -c "CREATE USER todouser WITH ENCRYPTED PASSWORD 'todopass';"
+   sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE todoapp TO todouser;"
+   ```
+
+3. **Configure environment variables**
+
+   ```bash
+   # Copy and edit .env file
+   cp .env.example .env
+   ```
+
+   Edit `.env`:
+
+   ```env
+   DATABASE_URL="postgresql://postgres:@localhost:5432/todoapp?schema=public"
+   JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
+   JWT_EXPIRES_IN="7d"
+   PORT=3001
+   NODE_ENV="development"
+   ```
+
+4. **Run database migrations**
+
+   ```bash
+   npx prisma migrate dev --name init
+   ```
+
+5. **Start the development server**
+   ```bash
+   yarn start:dev
+   ```
+
+The backend will be running at `http://localhost:3001`
+
+## 🔧 API Routes
+
+### Authentication Endpoints
+
+- `POST /api/auth/register` - Register new user
+
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "password123",
+    "name": "John Doe"
+  }
+  ```
+
+- `POST /api/auth/login` - Login user
+
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "password123"
+  }
+  ```
+
+- `POST /api/auth/logout` - Logout user (clears HTTP-only cookie)
+
+- `GET /api/auth/me` - Get current user profile (requires authentication)
+
+### Todo Endpoints
+
+All todo endpoints require authentication via JWT token.
+
+- `GET /api/todos` - Get user's todos with optional query parameters
+- `POST /api/todos` - Create new todo
+- `GET /api/todos/:id` - Get specific todo
+- `PATCH /api/todos/:id` - Update todo
+- `DELETE /api/todos/:id` - Delete todo
+- `GET /api/todos/stats` - Get todo statistics
+
+### Query Parameters for GET /api/todos
+
+- `priority` - Filter by priority (LOW, MEDIUM, HIGH)
+- `completed` - Filter by completion status (true/false)
+- `search` - Search in description (case-insensitive)
+- `sortBy` - Sort by field (priority, date, createdAt)
+- `sortOrder` - Sort order (asc, desc)
+- `page` - Page number for pagination (default: 1)
+- `limit` - Items per page (default: 10)
+
+### Todo Data Model
+
+```typescript
+interface Todo {
+  id: string;
+  description: string;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH';
+  completed: boolean;
+  pinned: boolean;
+  date: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+}
 ```
 
-## Run tests
+## 🧪 Testing
+
+### Running Tests
 
 ```bash
-# unit tests
-$ yarn run test
+# Unit tests
+yarn test
 
-# e2e tests
-$ yarn run test:e2e
+# E2E tests
+yarn test:e2e
 
-# test coverage
-$ yarn run test:cov
+# Test coverage
+yarn test:cov
 ```
 
-## Deployment
+### Test Files
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+- `src/auth/auth.service.spec.ts` - Authentication service tests
+- `src/todos/todos.service.spec.ts` - Todo service tests
+- `test/app.e2e-spec.ts` - End-to-end API tests
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## 🔒 Security Features
+
+### Authentication & Authorization
+
+- **JWT Tokens** - Secure authentication with HTTP-only cookies
+- **Password Hashing** - bcryptjs with salt rounds
+- **User Isolation** - Users can only access their own todos
+- **Guards** - Route protection with custom JWT guards
+
+### Input Validation
+
+- **Class Validator** - DTO validation with decorators
+- **Prisma Types** - Database-level type safety
+- **SQL Injection Protection** - Prisma ORM prevents SQL injection
+
+### Security Headers & CORS
+
+```typescript
+// main.ts security configuration
+app.enableCors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true,
+});
+```
+
+## 🗄️ Database Schema
+
+### User Table
+
+```sql
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  todos     Todo[]
+}
+```
+
+### Todo Table
+
+```sql
+model Todo {
+  id          String    @id @default(cuid())
+  description String
+  priority    Priority  @default(MEDIUM)
+  completed   Boolean   @default(false)
+  pinned      Boolean   @default(false)
+  date        DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+```
+
+## 📊 API Performance
+
+### Optimization Features
+
+- **Database Indexing** - Indexed fields for faster queries
+- **Pagination** - Efficient data retrieval for large datasets
+- **Query Optimization** - Selective field loading with Prisma
+- **Input Validation** - Early request validation to reduce processing
+
+### Monitoring
+
+- Request/response logging in development
+- Error tracking and stack traces
+- Performance metrics can be added with monitoring tools
+
+## 🚀 Deployment
+
+### Environment Setup
+
+For production deployment, ensure these environment variables are set:
+
+```env
+NODE_ENV=production
+DATABASE_URL="your-production-database-url"
+JWT_SECRET="strong-production-secret"
+JWT_EXPIRES_IN="7d"
+PORT=3001
+FRONTEND_URL="https://your-frontend-domain.com"
+```
+
+### Database Migration
 
 ```bash
-$ yarn install -g mau
-$ mau deploy
+# Production migration
+npx prisma migrate deploy
+
+# Generate Prisma client
+npx prisma generate
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Docker Support (Optional)
 
-## Resources
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npx prisma generate
+EXPOSE 3001
+CMD ["npm", "run", "start:prod"]
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+## 🔧 Development
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Code Quality
 
-## Support
+- **TypeScript** - Full type safety
+- **ESLint** - Code linting and style enforcement
+- **Prettier** - Code formatting
+- **Husky** - Git hooks for quality checks (can be added)
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Architecture Patterns
 
-## Stay in touch
+- **Module-based Architecture** - Organized by feature modules
+- **Dependency Injection** - NestJS built-in DI container
+- **Guard-based Security** - Route-level protection
+- **DTO Pattern** - Input/output data transformation
+- **Service Layer** - Business logic separation
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Adding New Features
 
-## License
+1. Create a new module: `nest g module feature-name`
+2. Generate service: `nest g service feature-name`
+3. Generate controller: `nest g controller feature-name`
+4. Add DTOs for validation
+5. Write tests for new functionality
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## 📈 Monitoring & Logging
+
+### Logging
+
+```typescript
+// Built-in NestJS logger
+import { Logger } from '@nestjs/common';
+
+@Injectable()
+export class YourService {
+  private readonly logger = new Logger(YourService.name);
+
+  someMethod() {
+    this.logger.log('Operation completed');
+    this.logger.error('Something went wrong');
+  }
+}
+```
+
+### Health Checks
+
+Add health check endpoint:
+
+```bash
+npm install @nestjs/terminus
+```
+
+## 🤝 Contributing
+
+1. Follow the existing code style and patterns
+2. Write tests for new features
+3. Update documentation
+4. Ensure all tests pass before submitting PRs
+
+## 📚 Resources
+
+- [NestJS Documentation](https://docs.nestjs.com/)
+- [Prisma Documentation](https://www.prisma.io/docs/)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+
+---
+
+**Built with ❤️ for Maxiphy Assessment**
